@@ -6,6 +6,7 @@ Returns:
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 
@@ -30,6 +31,7 @@ def topic(request, topic_id):
     return render(request, "learning_logs/topic.html", context)
 
 
+@login_required
 def new_topic(request) -> HttpResponseRedirect | HttpResponse:
     """Add a new topic."""
     if request.method != "POST":
@@ -47,6 +49,7 @@ def new_topic(request) -> HttpResponseRedirect | HttpResponse:
     return render(request, "learning_logs/new_topic.html", context)
 
 
+@login_required
 def new_entry(request, topic_id) -> HttpResponseRedirect | HttpResponse:
     """Add a new entry for a particular topic."""
     d_topic = Topic.objects.get(id=topic_id)  # ignore pylint: disable=E1101
@@ -68,6 +71,7 @@ def new_entry(request, topic_id) -> HttpResponseRedirect | HttpResponse:
     return render(request, "learning_logs/new_entry.html", context)
 
 
+@login_required
 def edit_entry(request, entry_id) -> HttpResponseRedirect | HttpResponse:
     """Edit an existing entry."""
     entry = Entry.objects.get(id=entry_id)  # ignore pylint: disable=E1101

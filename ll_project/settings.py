@@ -121,5 +121,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 # My Settings
+LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "learning_logs:index"
 LOGOUT_REDIRECT_URL = "learning_logs:index"
