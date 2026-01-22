@@ -3,7 +3,7 @@
 from django.urls import path
 from . import views
 
-APP_NAME = "learning_logs"
+app_name = "learning_logs"  # ignore pylint: disable=invalid-name
 urlpatterns = [
     # Home page
     path("", views.index, name="index"),
