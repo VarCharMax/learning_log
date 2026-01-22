@@ -7,6 +7,7 @@ Returns:
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 
@@ -16,6 +17,7 @@ def index(request) -> HttpResponse:
     return render(request, "learning_logs/index.html")
 
 
+@login_required
 def topics(request) -> HttpResponse:
     """Show all topics."""
     d_topics = Topic.objects.order_by("date_added")  # ignore pylint: disable=E1101
@@ -23,9 +25,12 @@ def topics(request) -> HttpResponse:
     return render(request, "learning_logs/topics.html", context)
 
 
-def topic(request, topic_id):
+def topic(request, topic_id) -> HttpResponse:
     """Show a single topic and all its entries."""
     d_topic = Topic.objects.get(id=topic_id)  # ignore pylint: disable=E1101
+    if d_topic.owner != request.user:
+        raise Http404
+
     entries = d_topic.entry_set.order_by("-date_added")  # type: ignore
     context = {"topic": d_topic, "entries": entries}
     return render(request, "learning_logs/topic.html", context)
@@ -41,7 +46,9 @@ def new_topic(request) -> HttpResponseRedirect | HttpResponse:
         # POST data submitted; process data.
         form = TopicForm(data=request.POST)
         if form.is_valid():
-            form.save()
+            new_user_topic = form.save(commit=False)
+            new_user_topic.owner = request.user
+            new_user_topic.save()
             return redirect("learning_logs:topics")
 
     # Display a blank or invalid form.
@@ -76,6 +83,8 @@ def edit_entry(request, entry_id) -> HttpResponseRedirect | HttpResponse:
     """Edit an existing entry."""
     entry = Entry.objects.get(id=entry_id)  # ignore pylint: disable=E1101
     d_topic = entry.topic  # type: ignore
+    if d_topic.owner != request.user:
+        raise Http404
 
     if request.method != "POST":
         # Initial request; pre-fill form with the current entry.
