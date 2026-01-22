@@ -25,7 +25,7 @@ class Entry(models.Model):
     text = models.TextField()
     date_added = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
+    class Meta:  # ignore pylint: disable=too-few-public-methods
         """Provide some extra information about the model."""
 
         verbose_name_plural = "entries"
