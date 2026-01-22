@@ -3,7 +3,7 @@
 from django.apps import AppConfig
 
 
-class LearningLogsConfig(AppConfig):
+class AccountsConfig(AppConfig):
     """_summary_"""
 
-    name = "learning_logs"
+    name = "accounts"
