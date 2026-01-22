@@ -16,6 +16,14 @@ def index(request) -> HttpResponse:
 
 def topics(request) -> HttpResponse:
     """Show all topics."""
-    d_topics = Topic.objects.order_by("date_added")
+    d_topics = Topic.objects.order_by("date_added")  # ignore pylint: disable=E1101
     context = {"topics": d_topics}
     return render(request, "learning_logs/topics.html", context)
+
+
+def topic(request, topic_id):
+    """Show a single topic and all its entries."""
+    d_topic = Topic.objects.get(id=topic_id)  # ignore pylint: disable=E1101
+    entries = d_topic.entry_set.order_by("-date_added")  # type: ignore
+    context = {"topic": d_topic, "entries": entries}
+    return render(request, "learning_logs/topic.html", context)
