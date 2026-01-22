@@ -7,4 +7,6 @@ app_name = "learning_logs"  # ignore pylint: disable=invalid-name
 urlpatterns = [
     # Home page
     path("", views.index, name="index"),
+    # Page that shows all topics.
+    path("topics/", views.topics, name="topics"),
 ]
